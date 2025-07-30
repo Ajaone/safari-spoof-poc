@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>1-Click Camera Capture PoC</title>
+  <title>Auto Capture + Show Image</title>
 </head>
 <body>
-  <h2>📸 1-Click to Auto-Capture</h2>
-  <button onclick="start()">Start Camera & Capture</button>
+  <h2>📸 1-Click Auto Capture & Display</h2>
+  <button onclick="start()">Start & Capture</button>
   <video id="video" autoplay playsinline width="300" style="display:none;"></video>
-  <canvas id="canvas" width="300" height="225"></canvas>
+  <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
+  <img id="photo" alt="Captured Photo" style="border:1px solid #ccc; width:300px;">
 
   <script>
     async function start() {
@@ -16,19 +17,23 @@
         const video = document.getElementById('video');
         video.srcObject = stream;
 
-        // Tunggu 500ms lalu ambil gambar
         setTimeout(() => {
           const canvas = document.getElementById('canvas');
           const ctx = canvas.getContext('2d');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-          // Optional: stop camera
+          // Stop camera
           stream.getTracks().forEach(track => track.stop());
 
-          alert("📸 Gambar diambil otomatis!");
-        }, 500); // waktu delay
+          // Get base64 image
+          const imgData = canvas.toDataURL('image/png');
+
+          // Show image
+          document.getElementById('photo').src = imgData;
+
+        }, 1000); // delay for camera to adjust
       } catch (err) {
-        alert('Kamera gagal dibuka: ' + err.message);
+        alert('Error: ' + err.message);
       }
     }
   </script>
