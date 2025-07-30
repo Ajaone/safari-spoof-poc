@@ -1,47 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Safari Storage Spoofing PoC</title>
-  <style>
-    body {
-      font-family: monospace;
-      padding: 20px;
-    }
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      z-index: 9999;
-    }
-  </style>
+  <title>1-Click Camera Capture PoC</title>
 </head>
 <body>
-  <h1>Safari Storage Spoofing PoC</h1>
-  <p>This page will try to spoof the address bar and show current sessionStorage & localStorage:</p>
-
-  <pre id="output">Loading storage...</pre>
+  <h2>📸 1-Click to Auto-Capture</h2>
+  <button onclick="start()">Start Camera & Capture</button>
+  <video id="video" autoplay playsinline width="300" style="display:none;"></video>
+  <canvas id="canvas" width="300" height="225"></canvas>
 
   <script>
-    // Push spoofed URL to history
-    history.pushState({}, '', 'https://apple.com');
+    async function start() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.getElementById('video');
+        video.srcObject = stream;
 
-    // Display localStorage and sessionStorage
-    let output = "Session Storage:\n";
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      output += `${key}: ${sessionStorage.getItem(key)}\n`;
+        // Tunggu 500ms lalu ambil gambar
+        setTimeout(() => {
+          const canvas = document.getElementById('canvas');
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Optional: stop camera
+          stream.getTracks().forEach(track => track.stop());
+
+          alert("📸 Gambar diambil otomatis!");
+        }, 500); // waktu delay
+      } catch (err) {
+        alert('Kamera gagal dibuka: ' + err.message);
+      }
     }
-
-    output += "\nLocal Storage:\n";
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      output += `${key}: ${localStorage.getItem(key)}\n`;
-    }
-
-    document.getElementById("output").innerText = output;
   </script>
 </body>
 </html>
