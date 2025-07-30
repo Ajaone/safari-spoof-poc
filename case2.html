@@ -1,41 +1,35 @@
+<!-- Filename: poc-uxss-camera.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Auto Capture + Show Image</title>
+  <title>Safari UXSS Auto Camera Trigger</title>
 </head>
 <body>
-  <h2>📸 1-Click Auto Capture & Display</h2>
-  <button onclick="start()">Start & Capture</button>
-  <video id="video" autoplay playsinline width="300" style="display:none;"></video>
-  <canvas id="canvas" width="300" height="225" style="display:none;"></canvas>
-  <img id="photo" alt="Captured Photo" style="border:1px solid #ccc; width:300px;">
+  <h2>🧪 Safari UXSS + Camera Auto Trigger (iOS 17)</h2>
 
   <script>
-    async function start() {
+    // Simulasi skenario: sudah dalam context spoofed origin (bypass SOP)
+    // Karena UXSS bug memungkinkan code attacker dijalankan di context 'trusted'
+    (async () => {
       try {
+        // Trigger kamera secara langsung tanpa interaksi
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        const video = document.getElementById('video');
+
+        // Buat elemen video
+        const video = document.createElement('video');
         video.srcObject = stream;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.style.width = '300px';
+        document.body.appendChild(video);
 
-        setTimeout(() => {
-          const canvas = document.getElementById('canvas');
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Tambahkan instruksi untuk memastikan user sadar
+        document.body.innerHTML += "<p><b>📸 Kamera telah dibuka otomatis</b> — UXSS active.</p>";
 
-          // Stop camera
-          stream.getTracks().forEach(track => track.stop());
-
-          // Get base64 image
-          const imgData = canvas.toDataURL('image/png');
-
-          // Show image
-          document.getElementById('photo').src = imgData;
-
-        }, 1000); // delay for camera to adjust
-      } catch (err) {
-        alert('Error: ' + err.message);
+      } catch (e) {
+        document.body.innerHTML += `<p style='color:red;'>❌ Kamera gagal diakses: ${e.message}</p>`;
       }
-    }
+    })();
   </script>
 </body>
 </html>
